@@ -22,7 +22,7 @@ urllib3.disable_warnings()
 
 class create_client():
 
-    def __init__(self, server, username="", password="", debug=False):
+    def __init__(self, server, username="", password="", debug=False, auth="Basic"):
 
         """At minimum server address or IP must be provided"""
 
@@ -30,9 +30,11 @@ class create_client():
 
         session        = Session()
         session.verify = False
-        session.auth   = HTTPBasicAuth(username, password)
-        session.get(server)  # Preemptive auth, needed for keycloak
-
+        if auth="Basic":    
+            session.auth   = HTTPBasicAuth(username, password)
+            session.get(server)  # Preemptive auth, needed for keycloak
+        else:
+            print("WARNING-No auth selected, session is unprotected")
         transport = Transport(session=session)
         self.history = HistoryPlugin()
         self.debug = debug
